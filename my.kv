@@ -5,9 +5,35 @@ ScreenManager:
     name: "main"
     GridLayout:
         size: root.width, root.height
-        Label:
-            text: 'Bubble Sort'
+        canvas.before:
+            Color:
+                rgba: 0.8, 0.8, 0.8, 1
+            Rectangle:
+                pos: -10, root.height - 70
+                size: root.width + 20, 70
+        Spinner:
+            text: 'Choose Algorithm'
+            background_normal: 'Assets/black.png'
+            background_down: 'Assets/white.png'
+            background_color: 1, 1, 1, 0.5
             font_size: 20
-            size: 50, 50
-            id: algo_name
-            pos: root.width - 120, root.height - 50
+            size: 200, 60
+            pos: 5, root.height - 65
+            values: 'Bubble Sort', 'Quick Sort', 'Merge Sort', 'Insertion Sort'
+            on_text: root.algorithm(self.text)
+        Spinner:
+            text: 'Number of elements'
+            background_normal: 'Assets/black.png'
+            background_down: 'Assets/white.png'
+            background_color: 1, 1, 1, 0.5
+            font_size: 20
+            size: 200, 60
+            pos: 210, root.height - 65
+        Spinner:
+            text: 'Time Duration'
+            background_normal: 'Assets/black.png'
+            background_down: 'Assets/white.png'
+            background_color: 1, 1, 1, 0.5
+            font_size: 20
+            size: 200, 60
+            pos: 415, root.height - 65
