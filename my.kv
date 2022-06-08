@@ -7,11 +7,12 @@ ScreenManager:
         size: root.width, root.height
         canvas.before:
             Color:
-                rgba: 0, 0.8, 0.8, 1
+                rgba: 0, 0, 1, 1
             Rectangle:
                 pos: -10, root.height - 70
                 size: root.width + 20, 70
         Spinner:
+            id: algo_name
             text: 'Choose Algorithm'
             text_size: self.width, None
             font_size: 20
@@ -19,11 +20,12 @@ ScreenManager:
             background_normal: 'Assets/Photos/black.png'
             background_down: 'Assets/Photos/white.png'
             background_color: 1, 1, 1, 0.5
-            size: root.width / 4 - 20, 60
+            size: root.width / 5 - 20, 60
             pos: 5, root.height - 65
             values: 'Bubble Sort', 'Quick Sort', 'Merge Sort', 'Insertion Sort'
-            on_text: root.algorithm(self.text)
+            on_text: root.render()
         Spinner:
+            id: number_of_elements
             text: 'Number of elements'
             text_size: self.width, None
             font_size: 20
@@ -31,11 +33,12 @@ ScreenManager:
             background_normal: 'Assets/Photos/black.png'
             background_down: 'Assets/Photos/white.png'
             background_color: 1, 1, 1, 0.5
-            size: root.width / 4 - 20, 60
-            pos: (root.width / 4) + 5, root.height - 65
-            values: '10', '100', '1000', '10000', '100000', '1000000'
-            on_text: root.number_of_elements(self.text)
+            size: root.width / 5 - 20, 60
+            pos: (root.width / 5) + 5, root.height - 65
+            values: '10', '100', '1000', '10000'
+            on_text: root.render()
         Spinner:
+            id: duration
             text: 'Time Duration'
             text_size: self.width, None
             font_size: 20
@@ -43,10 +46,10 @@ ScreenManager:
             background_normal: 'Assets/Photos/black.png'
             background_down: 'Assets/Photos/white.png'
             background_color: 1, 1, 1, 0.5
-            size: root.width / 4  - 20, 60
-            pos: 2 * (root.width / 4) + 5, root.height - 65
-            values: '0.25', '0.5', '0.75', '1', '1.25', '1.5', '1.75', '2'
-            on_text: root.time_duration(self.text)
+            size: root.width / 5  - 20, 60
+            pos: 2 * (root.width / 5) + 5, root.height - 65
+            values: '0.001', '0.01', '0.1', '0.25', '0.5', '0.75', '1'
+            on_text: root.render()
         Button:
             text: 'Start'
             text_size: self.width, None
@@ -55,6 +58,17 @@ ScreenManager:
             background_normal: 'Assets/Photos/black.png'
             background_down: 'Assets/Photos/white.png'
             background_color: 1, 1, 1, 0.5
-            size: root.width / 4  - 20, 60
-            pos: 3 * (root.width / 4) + 5, root.height - 65
+            size: root.width / 5  - 20, 60
+            pos: 3 * (root.width / 5) + 5, root.height - 65
             on_release: root.start()
+        Button:
+            text: 'Reset'
+            text_size: self.width, None
+            font_size: 20
+            halign:'center'
+            background_normal: 'Assets/Photos/black.png'
+            background_down: 'Assets/Photos/white.png'
+            background_color: 1, 1, 1, 0.5
+            size: root.width / 5  - 20, 60
+            pos: 4 * (root.width / 5) + 5, root.height - 65
+            on_release: root.reset()
