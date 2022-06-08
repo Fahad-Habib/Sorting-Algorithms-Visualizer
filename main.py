@@ -10,13 +10,12 @@ from threading import Thread
 
 
 def popup(message, ft_size, x_size):
-    pop = Popup(title=message,
-                title_size=ft_size,
-                title_align='center',
-                content=None,
-                size_hint=(None, None),
-                size=(x_size, 70))
-    pop.open()
+    Popup(title=message,
+          title_size=ft_size,
+          title_align='center',
+          content=None,
+          size_hint=(None, None),
+          size=(x_size, 70)).open()
 
 
 class MainWindow(Screen):
@@ -32,11 +31,15 @@ class MainWindow(Screen):
         self.sizes = []
 
     def render(self):
-        if self.ids.algo_name.text == 'Choose Algorithm':
+        if self.ids.algo_name.text == 'Choose Algorithm' or self.ids.number_of_elements.text == 'Number of elements' or self.ids.duration.text == 'Time Duration':
             return
-        if self.ids.number_of_elements.text == 'Number of elements':
-            return
-        if self.ids.duration.text == 'Time Duration':
+        if self.state == 1 and self.number != int(self.ids.number_of_elements.text):
+            for i in self.canvases:
+                i.pos = -10000, -10000
+            self.canvases = []
+            self.positions = []
+            self.sizes = []
+        elif self.state != 0:
             return
 
         self.algo_name = self.ids.algo_name.text
@@ -56,6 +59,7 @@ class MainWindow(Screen):
                                                pos=(25 + (w * n), 25)))
                 self.positions.append((25 + (w * n), 25))
                 self.sizes.append((w, h*i))
+        self.state = 1
         self.bind(pos=self.update_pos,
                   size=self.update_pos)
 
@@ -69,18 +73,18 @@ class MainWindow(Screen):
         if self.ids.duration.text == 'Number of elements':
             popup('Select time duration', 20, 230)
             return
-        if self.state == 1:
+        if self.state == 2:
             popup('Reset before Starting again', 20, 300)
             return
 
-        self.state = 1
+        self.state = 2
         Thread(target=self.start_thread).start()
 
     def start_thread(self):
-        print("Cool")
+        print("S")
 
-    def update_pos(self, t1=None, t2=None, t3=None):
-        try:
+    def update_pos(self, *args):
+        if self.state == 1:
             width, height = Window.width - 50, Window.height - 120
             length = len(self.array)
             maximum = max(self.array)
@@ -88,8 +92,6 @@ class MainWindow(Screen):
             for n, i in enumerate(self.canvases):
                 i.pos = (25 + (w * n), 25)
                 i.size = (w, h*self.array[n])
-        except ValueError:
-            pass
 
     def reset(self):
         for i in self.canvases:
