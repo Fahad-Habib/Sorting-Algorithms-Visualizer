@@ -20,6 +20,67 @@ def popup(message, ft_size, x_size):
 
 
 class MainWindow(Screen):
+    def mergeSort(self):
+        def merge(a, b):
+            c = []
+            n = len(a) + len(b)
+            while len(c) != n:
+                if len(a) == 0 and len(b) != 0:
+                    c += b
+                elif len(b) == 0 and len(a) != 0:
+                    c += a
+                else:
+                    if b[0] < a[0]:
+                        c.append(b[0])
+                        b.remove(b[0])
+                    else:
+                        c.append(a[0])
+                        a.remove(a[0])
+            return c
+
+        def sort(A):
+            if len(A) == 1:
+                return A
+            else:
+                return merge(sort(A[:len(A) // 2]), sort(A[len(A) // 2:]))
+
+        self.array = sort(self.array)
+
+    def quickSort(self):
+        def sort(data_list, first, last):
+            if first < last:
+                split_point = partition(data_list, first, last)
+
+                sort(data_list, first, split_point - 1)
+                sort(data_list, split_point + 1, last)
+
+        def partition(data_list, first, last):
+            pivot_value = data_list[first]
+
+            left_mark = first + 1
+            right_mark = last
+
+            done = False
+            while not done:
+
+                while left_mark <= right_mark and data_list[left_mark] <= pivot_value:
+                    left_mark += 1
+
+                while data_list[right_mark] >= pivot_value and right_mark >= left_mark:
+                    right_mark -= 1
+
+                if right_mark < left_mark:
+                    done = True
+                else:
+                    data_list[left_mark], data_list[right_mark] = data_list[right_mark], data_list[left_mark]
+
+            data_list[first], data_list[right_mark] = data_list[right_mark], data_list[first]
+
+            return right_mark
+
+        sort(self.array, 0, len(self.array) - 1)
+        print("DONE")
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -44,9 +105,11 @@ class MainWindow(Screen):
         self.duration = None
         self.array = []
         self.canvases = []
-        self.colors = []
         self.positions = []
         self.sizes = []
+
+        self.index_1 = None
+        self.index_2 = None
 
         with self.canvas:
             Color(0, 0, 1)
@@ -56,9 +119,9 @@ class MainWindow(Screen):
         self.algo_spinner = spinner('Choose Algorithm', (5, Window.height - 65),
                                     ('Bubble Sort', 'Quick Sort', 'Merge Sort', 'Insertion Sort'))
         self.number_spinner = spinner('Number of elements', (Window.width / 4 + 5, Window.height - 65),
-                                     ('50', '100', '1000', '10000'))
+                                     ('50', '100', '500', '1000', '5000', '10000'))
         self.time_spinner = spinner('Time Duration', (2 * (Window.width / 4) + 5, Window.height - 65),
-                                    ('0.001', '0.01', '0.1', '0.25', '0.5', '0.75', '1'))
+                                    ('1ms', '10ms', '100ms', '0.25s', '0.5s', '0.75s', '1s'))
 
         self.start_btn = Button(text='Start',
                                 text_size=(self.width, None),
@@ -103,15 +166,16 @@ class MainWindow(Screen):
                 for i in self.canvases:
                     i.pos = -10000, -10000
                 self.canvases = []
-                self.colors = []
                 self.positions = []
                 self.sizes = []
             else:
                 return
 
+        times = {'1ms': 0.001, '10ms': 0.01, '100ms': 0.1, '0.25s': 0.25, '0.5s': 0.5}
+
         self.algo_name = self.algo_spinner.text
         self.number = int(self.number_spinner.text)
-        self.duration = float(self.time_spinner.text)
+        self.duration = times[self.time_spinner.text]
         self.array = [x+1 for x in range(self.number)]
         shuffle(self.array)
 
@@ -120,13 +184,12 @@ class MainWindow(Screen):
         maximum = max(self.array)
         w, h = width / length, height / maximum
         for n, i in enumerate(self.array):
-            self.colors.append((1, 1, 1))
             with self.canvas:
-                Color(self.colors[n])
+                Color(1, 1, 1)
                 self.canvases.append(Rectangle(size=(w, h*i),
                                                pos=(25 + (w * n), 25)))
-                self.positions.append((25 + (w * n), 25))
-                self.sizes.append((w, h*i))
+            self.positions.append((25 + (w * n), 25))
+            self.sizes.append((w, h*i))
         self.state = True
         self.bind(pos=self.update_bars,
                   size=self.update_bars)
@@ -152,8 +215,21 @@ class MainWindow(Screen):
         Thread(target=self.start_thread).start()
 
     def start_thread(self):
+        if self.algo_name == 'Merge Sort':
+            self.mergeSort()
+        elif self.algo_name == 'Quick Sort':
+            self.quickSort()
+        self.update_bars()
+        temp_rects = []
         for i in range(self.number):
-            sleep(self.duration)
+            with self.canvas:
+                Color(0, 1, 0)
+                temp_rects.append(Rectangle(size=self.canvases[i].size, pos=self.canvases[i].pos))
+                self.canvases[i].pos = (-1000, -1000)
+            sleep(1 / self.number)
+        for i in temp_rects:
+            i.pos = -1000, -1000
+        self.update_bars()
         self.done = True
         self.update_btns()
 
@@ -189,11 +265,10 @@ class MainWindow(Screen):
             self.start_btn.size = (w / 4 - 20, 60)
             self.start_btn.text_size = (w / 4 - 20, None)
 
-            self.reset_btn.size = (w / 4 - 20, 60)
-            self.reset_btn.text_size = (w / 4 - 20, None)
-
         if self.done:
             self.reset_btn.pos = (3 * (w / 8) + 10, h - 65)
+            self.reset_btn.size = (w / 4 - 20, 60)
+            self.reset_btn.text_size = (w / 4 - 20, None)
         else:
             self.reset_btn.pos = (-1000, -1000)
 
@@ -208,7 +283,6 @@ class MainWindow(Screen):
         self.duration = None
         self.array = []
         self.canvases = []
-        self.colors = []
         self.positions = []
         self.sizes = []
         self.algo_spinner.text = 'Choose Algorithm'
