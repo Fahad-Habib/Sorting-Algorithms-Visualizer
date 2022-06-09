@@ -79,7 +79,6 @@ class MainWindow(Screen):
             return right_mark
 
         sort(self.array, 0, len(self.array) - 1)
-        print("DONE")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -119,7 +118,7 @@ class MainWindow(Screen):
         self.algo_spinner = spinner('Choose Algorithm', (5, Window.height - 65),
                                     ('Bubble Sort', 'Quick Sort', 'Merge Sort', 'Insertion Sort'))
         self.number_spinner = spinner('Number of elements', (Window.width / 4 + 5, Window.height - 65),
-                                     ('50', '100', '500', '1000', '5000', '10000'))
+                                     ('50', '100', '1000'))
         self.time_spinner = spinner('Time Duration', (2 * (Window.width / 4) + 5, Window.height - 65),
                                     ('1ms', '10ms', '100ms', '0.25s', '0.5s', '0.75s', '1s'))
 
@@ -164,7 +163,7 @@ class MainWindow(Screen):
         if self.state:
             if self.number != int(self.number_spinner.text):
                 for i in self.canvases:
-                    i.pos = -10000, -10000
+                    self.canvas.remove(i)
                 self.canvases = []
                 self.positions = []
                 self.sizes = []
@@ -225,10 +224,13 @@ class MainWindow(Screen):
             with self.canvas:
                 Color(0, 1, 0)
                 temp_rects.append(Rectangle(size=self.canvases[i].size, pos=self.canvases[i].pos))
-                self.canvases[i].pos = (-1000, -1000)
-            sleep(1 / self.number)
+            if self.number == 1000:
+                if i % 10 == 0:
+                    sleep(0.01)
+            else:
+                sleep(1 / self.number)
         for i in temp_rects:
-            i.pos = -1000, -1000
+            self.canvas.remove(i)
         self.update_bars()
         self.done = True
         self.update_btns()
@@ -274,7 +276,7 @@ class MainWindow(Screen):
 
     def reset(self, *args):
         for i in self.canvases:
-            i.pos = -10000, -10000
+            self.canvas.remove(i)
         self.state = False
         self.in_progress = False
         self.done = False
