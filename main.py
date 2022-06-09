@@ -29,8 +29,8 @@ class MainWindow(Screen):
                            text_size=(self.width, None),
                            font_size=20,
                            halign='center',
-                           background_normal='Assets/Photos/black.png',
-                           background_down='Assets/Photos/white.png',
+                           background_normal='Assets/b.png',
+                           background_down='Assets/w.png',
                            background_color=(1, 1, 1, 0.5),
                            size_hint=(None, None),
                            size=(Window.width / 4 - 20, 60),
@@ -63,15 +63,15 @@ class MainWindow(Screen):
         self.number_spinner = spinner('Number of elements', (Window.width / 4 + 5, Window.height - 65),
                                      ('50', '100', '500'))
         self.time_spinner = spinner('Time Duration', (2 * (Window.width / 4) + 5, Window.height - 65),
-                                    ('5ms', '10ms', '20ms', '50ms', '100ms'))
+                                    ('5ms', '10ms', '20ms', '50ms', '100ms', '500ms'))
 
         self.start_btn = Button(text='Start',
                                 text_size=(self.width, None),
                                 font_size=20,
                                 halign='center',
                                 size_hint=(None, None),
-                                background_normal='Assets/Photos/black.png',
-                                background_down='Assets/Photos/white.png',
+                                background_normal='Assets/b.png',
+                                background_down='Assets/w.png',
                                 background_color=(1, 1, 1, 0.5),
                                 size=(Window.width / 4 - 20, 60),
                                 pos=(3 * (Window.width / 4) + 5, Window.height - 65))
@@ -80,8 +80,8 @@ class MainWindow(Screen):
                                 font_size=20,
                                 halign='center',
                                 size_hint=(None, None),
-                                background_normal='Assets/Photos/black.png',
-                                background_down='Assets/Photos/white.png',
+                                background_normal='Assets/b.png',
+                                background_down='Assets/w.png',
                                 background_color=(1, 1, 1, 0.5),
                                 size=(Window.width / 4 - 20, 60),
                                 pos=(-1000, -1000))
@@ -186,7 +186,7 @@ class MainWindow(Screen):
             else:
                 return
 
-        times = {'5ms': 0.005, '10ms': 0.01, '20ms': 0.02, '50ms': 0.05, '100ms': 0.1}
+        times = {'5ms': 0.005, '10ms': 0.01, '20ms': 0.02, '50ms': 0.05, '100ms': 0.1, '500ms': 0.5}
 
         self.algo_name = self.algo_spinner.text
         self.number = int(self.number_spinner.text)
