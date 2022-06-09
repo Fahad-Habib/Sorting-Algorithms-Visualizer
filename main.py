@@ -20,66 +20,6 @@ def popup(message, ft_size, x_size):
 
 
 class MainWindow(Screen):
-    def mergeSort(self):
-        def merge(a, b):
-            c = []
-            n = len(a) + len(b)
-            while len(c) != n:
-                if len(a) == 0 and len(b) != 0:
-                    c += b
-                elif len(b) == 0 and len(a) != 0:
-                    c += a
-                else:
-                    if b[0] < a[0]:
-                        c.append(b[0])
-                        b.remove(b[0])
-                    else:
-                        c.append(a[0])
-                        a.remove(a[0])
-            return c
-
-        def sort(A):
-            if len(A) == 1:
-                return A
-            else:
-                return merge(sort(A[:len(A) // 2]), sort(A[len(A) // 2:]))
-
-        self.array = sort(self.array)
-
-    def quickSort(self):
-        def sort(data_list, first, last):
-            if first < last:
-                split_point = partition(data_list, first, last)
-
-                sort(data_list, first, split_point - 1)
-                sort(data_list, split_point + 1, last)
-
-        def partition(data_list, first, last):
-            pivot_value = data_list[first]
-
-            left_mark = first + 1
-            right_mark = last
-
-            done = False
-            while not done:
-
-                while left_mark <= right_mark and data_list[left_mark] <= pivot_value:
-                    left_mark += 1
-
-                while data_list[right_mark] >= pivot_value and right_mark >= left_mark:
-                    right_mark -= 1
-
-                if right_mark < left_mark:
-                    done = True
-                else:
-                    data_list[left_mark], data_list[right_mark] = data_list[right_mark], data_list[left_mark]
-
-            data_list[first], data_list[right_mark] = data_list[right_mark], data_list[first]
-
-            return right_mark
-
-        sort(self.array, 0, len(self.array) - 1)
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -106,6 +46,7 @@ class MainWindow(Screen):
         self.canvases = []
         self.positions = []
         self.sizes = []
+        self.sorted = False
 
         self.index_1 = None
         self.index_2 = None
@@ -118,7 +59,7 @@ class MainWindow(Screen):
         self.algo_spinner = spinner('Choose Algorithm', (5, Window.height - 65),
                                     ('Bubble Sort', 'Quick Sort', 'Merge Sort', 'Insertion Sort'))
         self.number_spinner = spinner('Number of elements', (Window.width / 4 + 5, Window.height - 65),
-                                     ('50', '100', '1000'))
+                                     ('50', '100', '500', '1000'))
         self.time_spinner = spinner('Time Duration', (2 * (Window.width / 4) + 5, Window.height - 65),
                                     ('1ms', '10ms', '100ms', '0.25s', '0.5s', '0.75s', '1s'))
 
@@ -156,6 +97,68 @@ class MainWindow(Screen):
         self.add_widget(self.reset_btn)
         self.bind(pos=self.update_btns,
                   size=self.update_btns)
+
+    def mergeSort(self):
+        def merge(a, b):
+            c = []
+            n = len(a) + len(b)
+            while len(c) != n:
+                if len(a) == 0 and len(b) != 0:
+                    c += b
+                elif len(b) == 0 and len(a) != 0:
+                    c += a
+                else:
+                    if b[0] < a[0]:
+                        c.append(b[0])
+                        b.remove(b[0])
+                    else:
+                        c.append(a[0])
+                        a.remove(a[0])
+            return c
+
+        def sort(A):
+            if len(A) == 1:
+                return A
+            else:
+                return merge(sort(A[:len(A) // 2]), sort(A[len(A) // 2:]))
+
+        self.array = sort(self.array)
+        self.sorted = True
+
+    def quickSort(self):
+        def sort(data_list, first, last):
+            if first < last:
+                split_point = partition(data_list, first, last)
+
+                sort(data_list, first, split_point - 1)
+                sort(data_list, split_point + 1, last)
+
+        def partition(data_list, first, last):
+            pivot_value = data_list[first]
+
+            left_mark = first + 1
+            right_mark = last
+
+            done = False
+            while not done:
+
+                while left_mark <= right_mark and data_list[left_mark] <= pivot_value:
+                    left_mark += 1
+
+                while data_list[right_mark] >= pivot_value and right_mark >= left_mark:
+                    right_mark -= 1
+
+                if right_mark < left_mark:
+                    done = True
+                else:
+                    data_list[left_mark], data_list[right_mark] = data_list[right_mark], data_list[left_mark]
+
+            data_list[first], data_list[right_mark] = data_list[right_mark], data_list[first]
+
+            return right_mark
+
+        sort(self.array, 0, len(self.array) - 1)
+        self.sorted = True
 
     def render(self, *args):
         if self.algo_spinner.text == 'Choose Algorithm' or self.number_spinner.text == 'Number of elements' or self.time_spinner.text == 'Time Duration':
@@ -215,16 +218,23 @@ class MainWindow(Screen):
 
     def start_thread(self):
         if self.algo_name == 'Merge Sort':
-            self.mergeSort()
+            Thread(target=self.mergeSort).start()
+            while not self.sorted:
+                pass
         elif self.algo_name == 'Quick Sort':
-            self.quickSort()
+            Thread(target=self.quickSort).start()
+            while not self.sorted:
+                pass
         self.update_bars()
         temp_rects = []
         for i in range(self.number):
             with self.canvas:
                 Color(0, 1, 0)
                 temp_rects.append(Rectangle(size=self.canvases[i].size, pos=self.canvases[i].pos))
-            if self.number == 1000:
+            if self.number == 500:
+                if i % 5 == 0:
+                    sleep(0.01)
+            elif self.number == 1000:
                 if i % 10 == 0:
                     sleep(0.01)
             else:
@@ -290,6 +300,7 @@ class MainWindow(Screen):
         self.algo_spinner.text = 'Choose Algorithm'
         self.number_spinner.text = 'Number of elements'
         self.time_spinner.text = 'Time Duration'
+        self.sorted = False
         self.update_btns()
 
 
