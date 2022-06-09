@@ -48,7 +48,14 @@ class MainWindow(Screen):
         self.positions = []
         self.sizes = []
         self.sorted = False
+
+        ######################
+
         self.pivot = None
+        self.left_mark = None
+        self.right_mark = None
+
+        ######################
 
         self.index_1 = None
         self.index_2 = None
@@ -63,7 +70,7 @@ class MainWindow(Screen):
         self.number_spinner = spinner('Number of elements', (Window.width / 4 + 5, Window.height - 65),
                                      ('50', '100', '500'))
         self.time_spinner = spinner('Time Duration', (2 * (Window.width / 4) + 5, Window.height - 65),
-                                    ('1ms', '5ms', '10ms', '20ms', '50ms', '100ms', '500ms'))
+                                    ('2ms', '5ms', '10ms', '20ms', '50ms', '100ms', '500ms'))
 
         self.start_btn = Button(text='Start',
                                 text_size=(self.width, None),
@@ -129,48 +136,52 @@ class MainWindow(Screen):
 
     def quickSort(self):
         def sort(data_list, first, last):
-            self.update_bars()
             if first < last:
                 split_point = partition(data_list, first, last)
-
                 sort(data_list, first, split_point - 1)
                 sort(data_list, split_point + 1, last)
 
         def partition(data_list, first, last):
             median = (first + last) // 2
             data_list[first], data_list[median] = (data_list[median], data_list[first])
-
             pivot_value = data_list[first]
-
             if type(self.pivot) == kivy.graphics.vertex_instructions.Rectangle:
                 self.canvas.remove(self.pivot)
-
             with self.canvas:
                 Color(0, 1, 0)
                 self.pivot = Rectangle(size=self.canvases[median].size,
                                        pos=self.canvases[median].pos)
-
             left_mark = first + 1
             right_mark = last
-
             done = False
             while not done:
-
                 while left_mark <= right_mark and data_list[left_mark] <= pivot_value:
                     left_mark += 1
-
                 while data_list[right_mark] >= pivot_value and right_mark >= left_mark:
                     right_mark -= 1
-
                 if right_mark < left_mark:
                     done = True
                 else:
                     data_list[left_mark], data_list[right_mark] = data_list[right_mark], data_list[left_mark]
+
+                if 0 < right_mark < len(self.array):
+                    if type(self.right_mark) == kivy.graphics.vertex_instructions.Rectangle:
+                        self.canvas.remove(self.right_mark)
+                    with self.canvas:
+                        Color(1, 0, 0)
+                        self.right_mark = Rectangle(size=self.canvases[right_mark].size,
+                                                    pos=self.canvases[right_mark].pos)
+
+                if 0 < left_mark < len(self.array):
+                    if type(self.left_mark) == kivy.graphics.vertex_instructions.Rectangle:
+                        self.canvas.remove(self.left_mark)
+                    with self.canvas:
+                        Color(1, 0, 0)
+                        self.left_mark = Rectangle(size=self.canvases[left_mark].size,
+                                                   pos=self.canvases[left_mark].pos)
                 sleep(self.duration)
                 self.update_bars()
-
             data_list[first], data_list[right_mark] = data_list[right_mark], data_list[first]
-
             return right_mark
 
         sort(self.array, 0, len(self.array) - 1)
@@ -189,7 +200,7 @@ class MainWindow(Screen):
             else:
                 return
 
-        times = {'1ms': 0.001, '5ms': 0.005, '10ms': 0.01, '20ms': 0.02, '50ms': 0.05, '100ms': 0.1, '500ms': 0.5}
+        times = {'2ms': 0.002, '5ms': 0.005, '10ms': 0.01, '20ms': 0.02, '50ms': 0.05, '100ms': 0.1, '500ms': 0.5}
 
         self.algo_name = self.algo_spinner.text
         self.number = int(self.number_spinner.text)
@@ -236,12 +247,17 @@ class MainWindow(Screen):
         if self.algo_name == 'Merge Sort':
             Thread(target=self.mergeSort).start()
             while not self.sorted:
-                pass
+                sleep(0.0001)
         elif self.algo_name == 'Quick Sort':
             Thread(target=self.quickSort).start()
             while not self.sorted:
-                pass
-            self.canvas.remove(self.pivot)
+                sleep(0.0001)
+            if type(self.pivot) == kivy.graphics.vertex_instructions.Rectangle:
+                self.canvas.remove(self.pivot)
+            if type(self.left_mark) == kivy.graphics.vertex_instructions.Rectangle:
+                self.canvas.remove(self.left_mark)
+            if type(self.right_mark) == kivy.graphics.vertex_instructions.Rectangle:
+                self.canvas.remove(self.right_mark)
         self.update_bars()
         temp_rects = []
         for i in range(self.number):
