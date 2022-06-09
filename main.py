@@ -63,7 +63,7 @@ class MainWindow(Screen):
         self.number_spinner = spinner('Number of elements', (Window.width / 4 + 5, Window.height - 65),
                                      ('50', '100', '500'))
         self.time_spinner = spinner('Time Duration', (2 * (Window.width / 4) + 5, Window.height - 65),
-                                    ('5ms', '10ms', '20ms', '50ms', '100ms', '500ms'))
+                                    ('1ms', '5ms', '10ms', '20ms', '50ms', '100ms', '500ms'))
 
         self.start_btn = Button(text='Start',
                                 text_size=(self.width, None),
@@ -133,11 +133,13 @@ class MainWindow(Screen):
             if first < last:
                 split_point = partition(data_list, first, last)
 
-                sleep(self.duration)
                 sort(data_list, first, split_point - 1)
                 sort(data_list, split_point + 1, last)
 
         def partition(data_list, first, last):
+            median = (first + last) // 2
+            data_list[first], data_list[median] = (data_list[median], data_list[first])
+
             pivot_value = data_list[first]
 
             if type(self.pivot) == kivy.graphics.vertex_instructions.Rectangle:
@@ -145,8 +147,8 @@ class MainWindow(Screen):
 
             with self.canvas:
                 Color(0, 1, 0)
-                self.pivot = Rectangle(size=self.canvases[first].size,
-                                       pos=self.canvases[first].pos)
+                self.pivot = Rectangle(size=self.canvases[median].size,
+                                       pos=self.canvases[median].pos)
 
             left_mark = first + 1
             right_mark = last
@@ -164,6 +166,7 @@ class MainWindow(Screen):
                     done = True
                 else:
                     data_list[left_mark], data_list[right_mark] = data_list[right_mark], data_list[left_mark]
+                sleep(self.duration)
                 self.update_bars()
 
             data_list[first], data_list[right_mark] = data_list[right_mark], data_list[first]
@@ -186,7 +189,7 @@ class MainWindow(Screen):
             else:
                 return
 
-        times = {'5ms': 0.005, '10ms': 0.01, '20ms': 0.02, '50ms': 0.05, '100ms': 0.1, '500ms': 0.5}
+        times = {'1ms': 0.001, '5ms': 0.005, '10ms': 0.01, '20ms': 0.02, '50ms': 0.05, '100ms': 0.1, '500ms': 0.5}
 
         self.algo_name = self.algo_spinner.text
         self.number = int(self.number_spinner.text)
