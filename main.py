@@ -267,7 +267,7 @@ class MainWindow(Screen):
             if i % (self.number / 100) == 0:
                 sleep(0.01)
         for i in temp_rects:
-            self.canvas.remove(i)
+            i.pos = (-1000, -1000)
         self.update_bars()
         self.done = True
         self.update_btns()
@@ -312,24 +312,9 @@ class MainWindow(Screen):
             self.reset_btn.pos = (-1000, -1000)
 
     def reset(self, *args):
-        for i in self.canvases:
-            self.canvas.remove(i)
-        self.state = False
-        self.in_progress = False
-        self.done = False
-        self.algo_name = None
-        self.number = None
-        self.duration = None
-        self.array = []
-        self.canvases = []
-        self.positions = []
-        self.sizes = []
-        self.algo_spinner.text = 'Choose Algorithm'
-        self.number_spinner.text = 'Number of elements'
-        self.time_spinner.text = 'Time Duration'
-        self.sorted = False
-        self.pivot = None
-        self.update_btns()
+        self.clear_widgets()
+        self.canvas.clear()
+        return self.__init__()
 
 
 class WindowManager(ScreenManager):
