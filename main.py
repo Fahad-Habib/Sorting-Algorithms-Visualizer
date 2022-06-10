@@ -83,6 +83,16 @@ class MainWindow(Screen):
 
         ######################
 
+        with self.canvas.after:
+            Color(0, 1, 0)
+            self.to_insert = Rectangle(size=(10, 10),
+                                       pos=(-1000, -1000))
+            Color(1, 0, 0)
+            self.to_compare = Rectangle(size=(10, 10),
+                                        pos=(-1000, -1000))
+
+        ######################
+
         with self.canvas:
             Color(0, 0, 1)
             self.top_bar = Rectangle(size=(Window.width + 20, 70),
@@ -135,15 +145,19 @@ class MainWindow(Screen):
         for i in range(l - 1):
             swapped = False
             for j in range(l - i - 1):
+
                 self.bubble_1.pos = self.canvases[j].pos
                 self.bubble_1.size = self.canvases[j].size
                 self.bubble_2.pos = self.canvases[j+1].pos
                 self.bubble_2.size = self.canvases[j+1].size
+
                 if self.array[j] > self.array[j + 1]:
                     self.array[j], self.array[j + 1] = self.array[j + 1], self.array[j]
                     swapped = True
+
                 self.update_bars()
                 sleep(self.duration)
+
             if not swapped:
                 break
         self.sorted = True
@@ -243,6 +257,19 @@ class MainWindow(Screen):
         self.sorted = True
 
     def insertionSort(self):
+        for i in range(1, len(self.array)):
+            key = self.array[i]
+            self.to_insert.pos = self.canvases[i].pos
+            self.to_insert.size = self.canvases[i].size
+            j = i - 1
+            while j >= 0 and key < self.array[j]:
+                self.to_compare.pos = self.canvases[j].pos
+                self.to_compare.size = self.canvases[j].size
+                self.array[j + 1] = self.array[j]
+                j -= 1
+                self.update_bars()
+                sleep(self.duration)
+            self.array[j + 1] = key
         self.sorted = True
 
     def render(self, *args):
