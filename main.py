@@ -93,13 +93,23 @@ class MainWindow(Screen):
 
         ######################
 
+        with self.canvas.after:
+            Color(0, 1, 0)
+            self.current_minimum = Rectangle(size=(10, 10),
+                                             pos=(-1000, -1000))
+            Color(1, 0, 0)
+            self.next_minimum = Rectangle(size=(10, 10),
+                                          pos=(-1000, -1000))
+
+        ######################
+
         with self.canvas:
             Color(0, 0, 1)
             self.top_bar = Rectangle(size=(Window.width + 20, 70),
                                      pos=(-10, Window.height - 70))
 
         self.algo_spinner = spinner('Choose Algorithm', (5, Window.height - 65),
-                                    ('Bubble Sort', 'Quick Sort', 'Merge Sort', 'Insertion Sort'))
+                                    ('Bubble Sort', 'Quick Sort', 'Merge Sort', 'Insertion Sort', 'Selection Sort'))
         self.number_spinner = spinner('Number of elements', (Window.width / 4 + 5, Window.height - 65),
                                      ('50', '100', '500', '1000'))
         self.time_spinner = spinner('Time Delay', (2 * (Window.width / 4) + 5, Window.height - 65),
@@ -272,6 +282,25 @@ class MainWindow(Screen):
             self.array[j + 1] = key
         self.sorted = True
 
+    def selectionSort(self):
+        for i in range(len(self.array)):
+            min_index = i
+            for j in range(i + 1, len(self.array)):
+                self.next_minimum.pos = self.canvases[j].pos
+                self.next_minimum.size = self.canvases[j].size
+                if self.array[min_index] > self.array[j]:
+                    min_index = j
+                self.update_bars()
+                sleep(1e-10)
+
+            self.array[i], self.array[min_index] = self.array[min_index], self.array[i]
+            self.update_bars()
+            self.current_minimum.pos = self.canvases[i].pos
+            self.current_minimum.size = self.canvases[i].size
+            sleep(self.duration)
+
+        self.sorted = True
+
     def render(self, *args):
         if self.algo_spinner.text == 'Choose Algorithm' or self.number_spinner.text == 'Number of elements' or self.time_spinner.text == 'Time Delay':
             return
@@ -359,6 +388,17 @@ class MainWindow(Screen):
             Thread(target=self.insertionSort).start()
             while not self.sorted:
                 sleep(0.0001)
+
+            self.to_insert.pos = (-1000, -1000)
+            self.to_compare.pos = (-1000, -1000)
+
+        elif self.algo_name == 'Selection Sort':
+            Thread(target=self.selectionSort).start()
+            while not self.sorted:
+                sleep(0.0001)
+
+            self.current_minimum.pos = (-1000, -1000)
+            self.next_minimum.pos = (-1000, -1000)
 
         self.update_bars()
         temp_rects = []
