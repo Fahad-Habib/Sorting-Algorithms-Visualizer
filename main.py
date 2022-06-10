@@ -103,13 +103,20 @@ class MainWindow(Screen):
 
         ######################
 
+        with self.canvas.after:
+            Color(1, 0, 0)
+            self.radix = Rectangle(size=(10, 10),
+                                   pos=(-1000, -1000))
+
+        ######################
+
         with self.canvas:
             Color(0, 0, 1)
             self.top_bar = Rectangle(size=(Window.width + 20, 70),
                                      pos=(-10, Window.height - 70))
 
         self.algo_spinner = spinner('Choose Algorithm', (5, Window.height - 65),
-                                    ('Bubble Sort', 'Quick Sort', 'Merge Sort', 'Insertion Sort', 'Selection Sort'))
+                                    ('Bubble Sort', 'Quick Sort', 'Merge Sort', 'Insertion Sort', 'Selection Sort', 'Radix Sort (LSD)'))
         self.number_spinner = spinner('Number of elements', (Window.width / 4 + 5, Window.height - 65),
                                      ('50', '100', '500', '1000'))
         self.time_spinner = spinner('Time Delay', (2 * (Window.width / 4) + 5, Window.height - 65),
@@ -301,6 +308,44 @@ class MainWindow(Screen):
 
         self.sorted = True
 
+    def radixSortLSD(self):
+        def sort(arg):
+            n = len(self.array)
+            output = [0] * n
+            count = [0] * 10
+
+            for i in range(0, n):
+                index = self.array[i] / arg
+                count[int(index % 10)] += 1
+                self.radix.pos = self.canvases[i].pos
+                self.radix.size = self.canvases[i].size
+                sleep(self.duration)
+
+            self.radix.pos = (-1000, -1000)
+
+            for i in range(1, 10):
+                count[i] += count[i - 1]
+
+            i = n - 1
+            while i >= 0:
+                index = self.array[i] / arg
+                output[count[int(index % 10)] - 1] = self.array[i]
+                count[int(index % 10)] -= 1
+                i -= 1
+
+            for i in range(0, len(output)):
+                self.array[i] = output[i]
+                self.update_bars()
+                sleep(self.duration)
+
+        maximum = max(self.array)
+        temp = 1
+        while maximum / temp >= 1:
+            sort(temp)
+            temp *= 10
+
+        self.sorted = True
+
     def render(self, *args):
         if self.algo_spinner.text == 'Choose Algorithm' or self.number_spinner.text == 'Number of elements' or self.time_spinner.text == 'Time Delay':
             return
@@ -319,7 +364,7 @@ class MainWindow(Screen):
         self.algo_name = self.algo_spinner.text
         self.number = int(self.number_spinner.text)
         self.duration = times[self.time_spinner.text]
-        self.array = [x+1 for x in range(self.number)]
+        self.array = [x for x in range(self.number)]
         shuffle(self.array)
 
         width, height = Window.width - 50, Window.height - 120
@@ -399,6 +444,13 @@ class MainWindow(Screen):
 
             self.current_minimum.pos = (-1000, -1000)
             self.next_minimum.pos = (-1000, -1000)
+
+        elif self.algo_name == 'Radix Sort (LSD)':
+            Thread(target=self.radixSortLSD).start()
+            while not self.sorted:
+                sleep(0.0001)
+
+            self.radix.pos = (-1000, -1000)
 
         self.update_bars()
         temp_rects = []
