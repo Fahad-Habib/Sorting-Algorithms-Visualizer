@@ -28,8 +28,8 @@ class MainWindow(Screen):
                            text_size=(Window.width / 4 - 20, None),
                            font_size=20,
                            halign='center',
-                           background_normal='Assets/b.png',
-                           background_down='Assets/w.png',
+                           background_normal='b.png',
+                           background_down='w.png',
                            background_color=(1, 1, 1, 0.5),
                            size_hint=(None, None),
                            size=(Window.width / 4 - 20, 60),
@@ -104,6 +104,9 @@ class MainWindow(Screen):
         ######################
 
         with self.canvas.after:
+            Color(0, 1, 0)
+            self.radix_sort = Rectangle(size=(10, 10),
+                                        pos=(-1000, -1000))
             Color(1, 0, 0)
             self.radix = Rectangle(size=(10, 10),
                                    pos=(-1000, -1000))
@@ -111,7 +114,7 @@ class MainWindow(Screen):
         ######################
 
         with self.canvas:
-            Color(0, 0, 1)
+            Color(1, 0, 0)
             self.top_bar = Rectangle(size=(Window.width + 20, 70),
                                      pos=(-10, Window.height - 70))
 
@@ -127,8 +130,8 @@ class MainWindow(Screen):
                                 font_size=20,
                                 halign='center',
                                 size_hint=(None, None),
-                                background_normal='Assets/b.png',
-                                background_down='Assets/w.png',
+                                background_normal='b.png',
+                                background_down='w.png',
                                 background_color=(1, 1, 1, 0.5),
                                 size=(Window.width / 4 - 20, 60),
                                 pos=(3 * (Window.width / 4) + 5, Window.height - 65))
@@ -137,8 +140,8 @@ class MainWindow(Screen):
                                 font_size=20,
                                 halign='center',
                                 size_hint=(None, None),
-                                background_normal='Assets/b.png',
-                                background_down='Assets/w.png',
+                                background_normal='b.png',
+                                background_down='w.png',
                                 background_color=(1, 1, 1, 0.5),
                                 size=(Window.width / 4 - 20, 60),
                                 pos=(-1000, -1000))
@@ -315,8 +318,8 @@ class MainWindow(Screen):
             count = [0] * 10
 
             for i in range(0, n):
-                index = self.array[i] / arg
-                count[int(index % 10)] += 1
+                index = self.array[i] // arg
+                count[index % 10] += 1
                 self.radix.pos = self.canvases[i].pos
                 self.radix.size = self.canvases[i].size
                 sleep(self.duration)
@@ -328,15 +331,19 @@ class MainWindow(Screen):
 
             i = n - 1
             while i >= 0:
-                index = self.array[i] / arg
-                output[count[int(index % 10)] - 1] = self.array[i]
-                count[int(index % 10)] -= 1
+                index = self.array[i] // arg
+                output[count[index % 10] - 1] = self.array[i]
+                count[index % 10] -= 1
                 i -= 1
 
             for i in range(len(output)):
                 self.array[i] = output[i]
+                self.radix_sort.pos = self.canvases[i].pos
+                self.radix_sort.size = self.canvases[i].size
                 self.update_bars()
                 sleep(self.duration)
+
+            self.radix_sort.pos = (-1000, -1000)
 
         maximum = max(self.array)
         temp = 1
@@ -373,7 +380,7 @@ class MainWindow(Screen):
         w, h = width / length, height / maximum
         for n, i in enumerate(self.array):
             with self.canvas:
-                Color(1, 1, 1)
+                Color(0.9, 0.9, 0.9)
                 self.canvases.append(Rectangle(size=(w, h*i),
                                                pos=(25 + (w * n), 25)))
             self.positions.append((25 + (w * n), 25))
@@ -451,6 +458,7 @@ class MainWindow(Screen):
                 sleep(0.0001)
 
             self.radix.pos = (-1000, -1000)
+            self.radix_sort.pos = (-1000, -1000)
 
         self.update_bars()
         temp_rects = []
