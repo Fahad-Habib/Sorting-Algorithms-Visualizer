@@ -51,14 +51,11 @@ class MainWindow(Screen):
         ######################
 
         with self.canvas.after:
-            Color(0, 1, 0)
-            self.pivot = Rectangle(size=(10, 10),
-                                   pos=(-1000, -1000))
             Color(1, 0, 0)
-            self.left_mark = Rectangle(size=(10, 10),
-                                       pos=(-1000, -1000))
-            self.right_mark = Rectangle(size=(10, 10),
-                                        pos=(-1000, -1000))
+            self.bubble_1 = Rectangle(size=(10, 10),
+                                      pos=(-1000, -1000))
+            self.bubble_2 = Rectangle(size=(10, 10),
+                                      pos=(-1000, -1000))
 
         ######################
 
@@ -71,6 +68,18 @@ class MainWindow(Screen):
             Color(0, 1, 0)
             self.merge_c = Rectangle(size=(10, 10),
                                      pos=(-1000, -1000))
+
+        ######################
+
+        with self.canvas.after:
+            Color(0, 1, 0)
+            self.pivot = Rectangle(size=(10, 10),
+                                   pos=(-1000, -1000))
+            Color(1, 0, 0)
+            self.left_mark = Rectangle(size=(10, 10),
+                                       pos=(-1000, -1000))
+            self.right_mark = Rectangle(size=(10, 10),
+                                        pos=(-1000, -1000))
 
         ######################
 
@@ -122,6 +131,21 @@ class MainWindow(Screen):
                   size=self.update_btns)
 
     def bubbleSort(self):
+        l = len(self.array)
+        for i in range(l - 1):
+            swapped = False
+            for j in range(l - i - 1):
+                self.bubble_1.pos = self.canvases[j].pos
+                self.bubble_1.size = self.canvases[j].size
+                self.bubble_2.pos = self.canvases[j+1].pos
+                self.bubble_2.size = self.canvases[j+1].size
+                if self.array[j] > self.array[j + 1]:
+                    self.array[j], self.array[j + 1] = self.array[j + 1], self.array[j]
+                    swapped = True
+                self.update_bars()
+                sleep(self.duration)
+            if not swapped:
+                break
         self.sorted = True
 
     def quickSort(self):
@@ -283,16 +307,16 @@ class MainWindow(Screen):
             while not self.sorted:
                 sleep(0.0001)
 
+            self.bubble_1.pos = (-1000, -1000)
+            self.bubble_2.pos = (-1000, -1000)
+
         elif self.algo_name == 'Quick Sort':
             Thread(target=self.quickSort).start()
             while not self.sorted:
                 sleep(0.0001)
 
-            self.pivot.size = (10, 10)
             self.pivot.pos = (-1000, -1000)
-            self.left_mark.size = (10, 10)
             self.left_mark.pos = (-1000, -1000)
-            self.right_mark.size = (10, 10)
             self.right_mark.pos = (-1000, -1000)
 
         elif self.algo_name == 'Merge Sort':
@@ -300,11 +324,8 @@ class MainWindow(Screen):
             while not self.sorted:
                 sleep(0.0001)
 
-            self.merge_a.size = (10, 10)
             self.merge_a.pos = (-1000, -1000)
-            self.merge_b.size = (10, 10)
             self.merge_b.pos = (-1000, -1000)
-            self.merge_c.size = (10, 10)
             self.merge_c.pos = (-1000, -1000)
 
         elif self.algo_name == 'Insertion Sort':
