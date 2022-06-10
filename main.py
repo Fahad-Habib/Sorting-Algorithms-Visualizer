@@ -333,7 +333,7 @@ class MainWindow(Screen):
                 count[int(index % 10)] -= 1
                 i -= 1
 
-            for i in range(0, len(output)):
+            for i in range(len(output)):
                 self.array[i] = output[i]
                 self.update_bars()
                 sleep(self.duration)
