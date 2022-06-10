@@ -25,7 +25,7 @@ class MainWindow(Screen):
 
         def spinner(text, pos, values):
             return Spinner(text=text,
-                           text_size=(self.width, None),
+                           text_size=(Window.width / 4 - 20, None),
                            font_size=20,
                            halign='center',
                            background_normal='Assets/b.png',
@@ -84,7 +84,7 @@ class MainWindow(Screen):
                                     ('2ms', '5ms', '10ms', '20ms', '50ms', '100ms', '500ms'))
 
         self.start_btn = Button(text='Start',
-                                text_size=(self.width, None),
+                                text_size=(Window.width / 4 - 20, None),
                                 font_size=20,
                                 halign='center',
                                 size_hint=(None, None),
@@ -94,7 +94,7 @@ class MainWindow(Screen):
                                 size=(Window.width / 4 - 20, 60),
                                 pos=(3 * (Window.width / 4) + 5, Window.height - 65))
         self.reset_btn = Button(text='Reset',
-                                text_size=(self.width, None),
+                                text_size=(Window.width / 4 - 20, None),
                                 font_size=20,
                                 halign='center',
                                 size_hint=(None, None),
@@ -231,7 +231,7 @@ class MainWindow(Screen):
         if self.number_spinner.text == 'Number of elements':
             popup('Select Number of elements', 20, 290)
             return
-        if self.time_spinner.text == 'Number of elements':
+        if self.time_spinner.text == 'Time Duration':
             popup('Select time duration', 20, 230)
             return
 
