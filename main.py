@@ -121,6 +121,9 @@ class MainWindow(Screen):
         self.bind(pos=self.update_btns,
                   size=self.update_btns)
 
+    def bubbleSort(self):
+        self.sorted = True
+
     def quickSort(self):
         def sort(data_list, first, last):
             if first < last:
@@ -168,8 +171,6 @@ class MainWindow(Screen):
         def merge(a, b):
             c = []
             s = self.array.index(a[0])
-            # if a[0] > b[0]:
-            #     s = b[0]
             n = len(a) + len(b)
             while len(c) != n:
                 if len(a) == 0 and len(b) != 0:
@@ -194,10 +195,12 @@ class MainWindow(Screen):
                         self.merge_a.size = self.canvases[self.array.index(a[0])].size
                         a.remove(a[0])
                     sleep(self.duration)
+
             self.merge_a.size = (10, 10)
             self.merge_a.pos = (-1000, -1000)
             self.merge_b.size = (10, 10)
             self.merge_b.pos = (-1000, -1000)
+
             for i, j in enumerate(c):
                 self.array[i+s] = j
                 self.merge_c.pos = self.canvases[i+s].pos
@@ -213,6 +216,9 @@ class MainWindow(Screen):
                 return merge(sort(A[:len(A) // 2]), sort(A[len(A) // 2:]))
 
         self.array = sort(self.array)
+        self.sorted = True
+
+    def insertionSort(self):
         self.sorted = True
 
     def render(self, *args):
@@ -272,17 +278,10 @@ class MainWindow(Screen):
         Thread(target=self.start_thread).start()
 
     def start_thread(self):
-        if self.algo_name == 'Merge Sort':
-            Thread(target=self.mergeSort).start()
+        if self.algo_name == 'Bubble Sort':
+            Thread(target=self.bubbleSort).start()
             while not self.sorted:
                 sleep(0.0001)
-
-            self.merge_a.size = (10, 10)
-            self.merge_a.pos = (-1000, -1000)
-            self.merge_b.size = (10, 10)
-            self.merge_b.pos = (-1000, -1000)
-            self.merge_c.size = (10, 10)
-            self.merge_c.pos = (-1000, -1000)
 
         elif self.algo_name == 'Quick Sort':
             Thread(target=self.quickSort).start()
@@ -295,6 +294,23 @@ class MainWindow(Screen):
             self.left_mark.pos = (-1000, -1000)
             self.right_mark.size = (10, 10)
             self.right_mark.pos = (-1000, -1000)
+
+        elif self.algo_name == 'Merge Sort':
+            Thread(target=self.mergeSort).start()
+            while not self.sorted:
+                sleep(0.0001)
+
+            self.merge_a.size = (10, 10)
+            self.merge_a.pos = (-1000, -1000)
+            self.merge_b.size = (10, 10)
+            self.merge_b.pos = (-1000, -1000)
+            self.merge_c.size = (10, 10)
+            self.merge_c.pos = (-1000, -1000)
+
+        elif self.algo_name == 'Insertion Sort':
+            Thread(target=self.insertionSort).start()
+            while not self.sorted:
+                sleep(0.0001)
 
         self.update_bars()
         temp_rects = []
