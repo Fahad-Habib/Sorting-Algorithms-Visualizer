@@ -64,9 +64,12 @@ class MainWindow(Screen):
 
         with self.canvas.after:
             Color(1, 0, 0)
-            self.merge_1 = Rectangle(size=(10, 10),
+            self.merge_a = Rectangle(size=(10, 10),
                                      pos=(-1000, -1000))
-            self.merge_2 = Rectangle(size=(10, 10),
+            self.merge_b = Rectangle(size=(10, 10),
+                                     pos=(-1000, -1000))
+            Color(0, 1, 0)
+            self.merge_c = Rectangle(size=(10, 10),
                                      pos=(-1000, -1000))
 
         ######################
@@ -80,7 +83,7 @@ class MainWindow(Screen):
                                     ('Bubble Sort', 'Quick Sort', 'Merge Sort', 'Insertion Sort'))
         self.number_spinner = spinner('Number of elements', (Window.width / 4 + 5, Window.height - 65),
                                      ('50', '100', '500', '1000'))
-        self.time_spinner = spinner('Time Duration', (2 * (Window.width / 4) + 5, Window.height - 65),
+        self.time_spinner = spinner('Time Delay', (2 * (Window.width / 4) + 5, Window.height - 65),
                                     ('2ms', '5ms', '10ms', '20ms', '50ms', '100ms', '500ms'))
 
         self.start_btn = Button(text='Start',
@@ -117,33 +120,6 @@ class MainWindow(Screen):
         self.add_widget(self.reset_btn)
         self.bind(pos=self.update_btns,
                   size=self.update_btns)
-
-    def mergeSort(self):
-        def merge(a, b):
-            c = []
-            n = len(a) + len(b)
-            while len(c) != n:
-                if len(a) == 0 and len(b) != 0:
-                    c += b
-                elif len(b) == 0 and len(a) != 0:
-                    c += a
-                else:
-                    if b[0] < a[0]:
-                        c.append(b[0])
-                        b.remove(b[0])
-                    else:
-                        c.append(a[0])
-                        a.remove(a[0])
-            return c
-
-        def sort(A):
-            if len(A) == 1:
-                return A
-            else:
-                return merge(sort(A[:len(A) // 2]), sort(A[len(A) // 2:]))
-
-        self.array = sort(self.array)
-        self.sorted = True
 
     def quickSort(self):
         def sort(data_list, first, last):
@@ -188,8 +164,59 @@ class MainWindow(Screen):
         sort(self.array, 0, len(self.array) - 1)
         self.sorted = True
 
+    def mergeSort(self):
+        def merge(a, b):
+            c = []
+            s = self.array.index(a[0])
+            # if a[0] > b[0]:
+            #     s = b[0]
+            n = len(a) + len(b)
+            while len(c) != n:
+                if len(a) == 0 and len(b) != 0:
+                    for i in b:
+                        c.append(i)
+                        self.merge_b.pos = self.canvases[self.array.index(i)].pos
+                        self.merge_b.size = self.canvases[self.array.index(i)].size
+                elif len(b) == 0 and len(a) != 0:
+                    for i in a:
+                        c.append(i)
+                        self.merge_a.pos = self.canvases[self.array.index(i)].pos
+                        self.merge_a.size = self.canvases[self.array.index(i)].size
+                else:
+                    if b[0] < a[0]:
+                        c.append(b[0])
+                        self.merge_b.pos = self.canvases[self.array.index(b[0])].pos
+                        self.merge_b.size = self.canvases[self.array.index(b[0])].size
+                        b.remove(b[0])
+                    else:
+                        c.append(a[0])
+                        self.merge_a.pos = self.canvases[self.array.index(a[0])].pos
+                        self.merge_a.size = self.canvases[self.array.index(a[0])].size
+                        a.remove(a[0])
+                    sleep(self.duration)
+            self.merge_a.size = (10, 10)
+            self.merge_a.pos = (-1000, -1000)
+            self.merge_b.size = (10, 10)
+            self.merge_b.pos = (-1000, -1000)
+            for i, j in enumerate(c):
+                self.array[i+s] = j
+                self.merge_c.pos = self.canvases[i+s].pos
+                self.merge_c.size = self.canvases[i+s].size
+                self.update_bars()
+                sleep(self.duration)
+            return c
+
+        def sort(A):
+            if len(A) == 1:
+                return A
+            else:
+                return merge(sort(A[:len(A) // 2]), sort(A[len(A) // 2:]))
+
+        self.array = sort(self.array)
+        self.sorted = True
+
     def render(self, *args):
-        if self.algo_spinner.text == 'Choose Algorithm' or self.number_spinner.text == 'Number of elements' or self.time_spinner.text == 'Time Duration':
+        if self.algo_spinner.text == 'Choose Algorithm' or self.number_spinner.text == 'Number of elements' or self.time_spinner.text == 'Time Delay':
             return
         if self.state:
             if self.number != int(self.number_spinner.text):
@@ -231,7 +258,7 @@ class MainWindow(Screen):
         if self.number_spinner.text == 'Number of elements':
             popup('Select Number of elements', 20, 290)
             return
-        if self.time_spinner.text == 'Time Duration':
+        if self.time_spinner.text == 'Time Delay':
             popup('Select time duration', 20, 230)
             return
 
@@ -249,6 +276,14 @@ class MainWindow(Screen):
             Thread(target=self.mergeSort).start()
             while not self.sorted:
                 sleep(0.0001)
+
+            self.merge_a.size = (10, 10)
+            self.merge_a.pos = (-1000, -1000)
+            self.merge_b.size = (10, 10)
+            self.merge_b.pos = (-1000, -1000)
+            self.merge_c.size = (10, 10)
+            self.merge_c.pos = (-1000, -1000)
+
         elif self.algo_name == 'Quick Sort':
             Thread(target=self.quickSort).start()
             while not self.sorted:
