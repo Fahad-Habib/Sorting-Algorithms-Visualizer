@@ -1,6 +1,7 @@
 # SortingAlgorithmVisualizer
 
 Python program made with kivy library for visualizing different sorting algorithms.
+Support this project by leaving a :star:
 
 ## Using the application
 
