@@ -10,7 +10,7 @@ The sorting algorithms implemented in this project are:
  - Merge Sort
  - Insertion Sort
  - Selection Sort
- - Radix Sort (LSD)'
+ - Radix Sort (LSD)
 
 Support this project by leaving a :star:
 
