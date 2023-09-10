@@ -14,7 +14,25 @@ The sorting algorithms implemented in this project are:
 
 Support this project by leaving a :star:
 
-## Using the application
+## Getting Started
 
-- Clone GitHub repository
-- Install requirements: `pip3 install -r requirements.txt`
+Follow these steps to run the project:
+
+- Clone the repo
+
+```commandline
+git clone https://github.com/Fahad-Habib/Sorting-Algorithms-Visualizer.git
+cd Sorting-Algorithms-Visualizer
+```
+
+- Install requirements
+
+```commandline
+python -m pip install -r requirements.txt
+```
+
+- Run
+
+```commandline
+python main.py
+```
